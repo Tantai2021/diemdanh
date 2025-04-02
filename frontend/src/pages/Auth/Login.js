@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
@@ -6,22 +6,26 @@ import { useAuth } from '../../context/Auth';
 import { Slide, ToastContainer, toast } from 'react-toastify';
 
 import AuthServices from '../../services/Auth';
-import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
+import { useNavigate } from 'react-router-dom';
+
 function Login() {
-    const { login, user, loading } = useAuth();
+    const { login, user } = useAuth();
     const navigate = useNavigate();
     const [email, setEmail] = useState("DH52111700@student.stu.edu.vn");
     const [password, setPassword] = useState("DH52111700");
     const [validated, setValidated] = useState(false);
 
     useEffect(() => {
-        if (user) {
-            const decodeUser = jwtDecode(user);
-            console.log(decodeUser);
+        if (user)
+            if (user.role === "admin")
+                navigate('/admin');
+            else if (user.role === "teacher")
+                navigate('/teacher');
+            else if (user.role === "student")
+                navigate('/');
 
-        }
-    }, [user, navigate]);
+    }, [user]);
 
     const handleSubmit = async (event) => {
         event.preventDefault(); // Dừng việc gửi form
@@ -35,7 +39,8 @@ function Login() {
             const response = await AuthServices.login(email, password);
 
             if (response.status === 200) {
-                login({ token: response.data.token });
+                const decodeUser = jwtDecode(response.data.token);
+                login(decodeUser);
                 toast.success(response.data.message);
             } else {
                 toast.error(response.response.data.message);

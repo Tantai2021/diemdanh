@@ -2,27 +2,38 @@ import React, { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import Layout from "../components/layouts/index";
 
-import AuthRoutes from "./Auth/index";
-import StudentRoutes from "./Student/index";
-import AdminRoutes from "./Admin/index";
-import MiddleWare from "../middlewares/checkLogin";
-import { useAuth } from "../context/Auth";
-import LoadPage from "../pages/LoadPage";
+// PRIVATE ROUTES
+import AdminRoutes from "./PrivateRoutes/AdminRoutes";
+import TeacherRoutes from "./PrivateRoutes/TeacherRoutes";
+import StudentRoutes from "./PrivateRoutes/StudentRoutes";
+
+// PAGES
+import Classes from "../pages/Classes/Home";
+import LoginPage from "../pages/Auth/Login";
+import Unauthorized from "../pages/Unauthorized";
 
 const ConfigRouter = () => {
-    const { user } = useAuth();
-    console.log(user);
 
     return (
         <Routes>
-            {/* Middleware sẽ kiểm tra user trước khi hiển thị nội dung */}
+            {/* Private routes */}
+
             <Route element={<Layout />}>
-                <Route path="/*" element={<StudentRoutes />} />
-                <Route path="/admin/*" element={<AdminRoutes />} />
-                <Route path="/admin/*" element={<AdminRoutes />} />
+                <Route path="/" element={<StudentRoutes />}>
+                    <Route index element={<Classes />} />
+                </Route>
+                <Route path="/admin" element={<AdminRoutes />}>
+                    <Route index element={<Classes />} />
+                </Route>
+                <Route path="/teacher" element={<TeacherRoutes />}>
+                    <Route index element={<Classes />} />
+                </Route>
             </Route>
-            {/* Định tuyến cho trang đăng nhập */}
-            <Route path="/auth/*" element={<AuthRoutes />} />
+
+            {/* Public routes */}
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/unauthorized" element={<Unauthorized />} />
+
         </Routes>
     );
 };

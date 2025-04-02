@@ -18,13 +18,16 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const storedUser = sessionStorage.getItem("userToken");
         try {
-            setUser(jwtDecode(JSON.parse(storedUser).token));
+            setUser(JSON.parse(storedUser));
         } catch (error) {
             console.error("Lỗi khi giải mã token:", error);
             sessionStorage.removeItem("userToken"); // Xóa token không hợp lệ
             setUser(null);
         }
-        setLoading(false);
+        const timer = setTimeout(() => {
+            setLoading(false);
+        }, 200);
+        return () => clearTimeout(timer);
     }, []);
     // Hàm để login, logout hoặc cập nhật thông tin người dùng
     const login = (userData) => {
@@ -33,9 +36,8 @@ export const AuthProvider = ({ children }) => {
             console.log("Token không hợp lệ");
             return;
         }
-        setLoading(false);
         sessionStorage.setItem("userToken", JSON.stringify(userData)); // Lưu vào sessionStorage
-        setUser(userData.token);
+        setUser(userData);
         setError(null);
     };
 
