@@ -20,6 +20,7 @@ const Sidebar = () => {
                 {user?.role === "teacher" && (
                     <>
                         <li className="list-style-none mb-2"><Link className="text-decoration-none fs-5 text-black" to="/classes">Quản lý lớp học</Link></li>
+                        <li className="list-style-none mb-2"><Link className="text-decoration-none fs-5 text-black" to="/">Thời khóa biểu</Link></li>
                         <li className="list-style-none mb-2"><Link className="text-decoration-none fs-5 text-black" to="/attendance">Điểm danh</Link></li>
                     </>
                 )}

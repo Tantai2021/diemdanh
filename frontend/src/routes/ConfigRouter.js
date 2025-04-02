@@ -8,7 +8,8 @@ import TeacherRoutes from "./PrivateRoutes/TeacherRoutes";
 import StudentRoutes from "./PrivateRoutes/StudentRoutes";
 
 // PAGES
-import Classes from "../pages/Classes/Home";
+import Classes from "../pages/Classes/index";
+import Attendance from "../pages/Attendance/index";
 import LoginPage from "../pages/Auth/Login";
 import Unauthorized from "../pages/Unauthorized";
 
@@ -20,13 +21,14 @@ const ConfigRouter = () => {
 
             <Route element={<Layout />}>
                 <Route path="/" element={<StudentRoutes />}>
-                    <Route index element={<Classes />} />
+                    <Route index element={<Classes.List />} />
                 </Route>
                 <Route path="/admin" element={<AdminRoutes />}>
-                    <Route index element={<Classes />} />
+                    <Route index element={<Classes.List />} />
                 </Route>
                 <Route path="/teacher" element={<TeacherRoutes />}>
-                    <Route index element={<Classes />} />
+                    <Route index element={<Classes.List />} />
+                    <Route path="attendance-record/:class_id" element={<Attendance.Record />} />
                 </Route>
             </Route>
 

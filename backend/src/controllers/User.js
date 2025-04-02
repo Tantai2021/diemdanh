@@ -6,8 +6,6 @@ const jwt = require("jsonwebtoken");
 const User = {
     login: async (req, res) => {
         const { email, password } = req.body;
-        console.log(email);
-        console.log(password);
         try {
             // Tìm user theo email
             const user = await models.User.findOne({ where: { email } });
@@ -18,7 +16,6 @@ const User = {
 
             // Kiểm tra mật khẩu
             const isMatch = await bcrypt.compare(password, user.password);
-            console.log(isMatch);
             if (!isMatch) {
                 return res.status(401).json({ message: "Email hoặc mật khẩu không đúng!" });
             }
@@ -26,7 +23,7 @@ const User = {
             // Tạo token JWT
             const token = jwt.sign(
                 { id: user.id, email: user.email, role: user.role },
-                "123456789", // Thay thế bằng SECRET_KEY thực tế
+                process.env.SECRET_KEY, // Thay thế bằng SECRET_KEY thực tế
                 { expiresIn: "7h" }
             );
 

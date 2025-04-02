@@ -1,4 +1,5 @@
 const models = require("../models/index");
+const { Op } = require("sequelize");
 
 const AttendanceRecord = {
     // 1. Lấy tất cả bản ghi điểm danh
@@ -113,6 +114,53 @@ const AttendanceRecord = {
             res.json(records);
         } catch (error) {
             res.status(500).json({ message: "Lỗi khi lấy bản ghi điểm danh", error });
+        }
+    },
+
+    // 7. Lấy danh sách bản ghi điểm danh theo class_id và teacher_id
+    getAttendanceRecordsByClassId: async (req, res) => {
+        const { class_id } = req.query;  // Lấy session_id từ tham số trong URL
+        const user = req.user;
+
+        if (!class_id || !user)
+            return res.status(401).json({ message: "Thiếu thông tin cần thiết" });
+
+        try {
+            const teacher = await models.Teacher.findOne({
+                where: { user_id: user.id },
+                attributes: ["teacher_id"]
+            })
+
+            if (!teacher)
+                return res.status(401).json({ message: "Không tìm thấy thông tin giáo viên" });
+
+            const session = await models.AttendanceSession.findOne({
+                where: {
+                    [Op.and]: [
+                        { class_id: class_id },
+                        { teacher_id: teacher.teacher_id }
+                    ]
+                },
+                attributes: ["id", "session_code"]
+            });
+
+            if (!session)
+                return res.status(401).json({ message: "Chưa tạo buổi điểm danh" });
+
+            let records = await models.AttendanceRecord.findAll({
+                where: { session_id: session.id },
+                include: {
+                    model: models.Student,
+                    attributes: ["first_name", "last_name"]
+                }
+            });
+
+            if (!records || records.length === 0)
+                return res.status(401).json({ message: "Chưa thêm sinh viên vào buổi điểm danh" });
+            return res.status(200).json({ value: records, session_code: session.session_code });
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ message: "Lỗi khi lấy bản ghi điểm danh", error });
         }
     }
 };

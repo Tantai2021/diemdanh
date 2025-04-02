@@ -4,11 +4,14 @@ const models = require("../models/index");
 const Classes = {
     // 1. Lấy tất cả lớp học
     getAllClasses: async (req, res) => {
+        console.log("User info from token:", req.user);
         try {
             const classes = await models.Classes.findAll();
-            res.json(classes);
+            console.log("Classes from DB:", classes);
+            return res.json({ classes: classes });
         } catch (error) {
-            res.status(500).json({ message: "Lỗi khi lấy danh sách lớp học", error });
+            console.log(error);
+            return res.status(500).json({ message: "Lỗi khi lấy danh sách lớp học", error });
         }
     },
 

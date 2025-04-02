@@ -6,6 +6,6 @@ const AttendanceRecord = sequelize.define("attendance_records", {
     student_id: { type: DataTypes.INTEGER, allowNull: false, unique: true },
     session_id: { type: DataTypes.INTEGER, allowNull: false, unique: true },
     status: { type: DataTypes.ENUM("Present", "Absent", "None"), defaultValue: "None", allowNull: false },
-});
+}, { timestamps: false });
 
 module.exports = AttendanceRecord;

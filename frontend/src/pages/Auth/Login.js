@@ -6,8 +6,8 @@ import { useAuth } from '../../context/Auth';
 import { Slide, ToastContainer, toast } from 'react-toastify';
 
 import AuthServices from '../../services/Auth';
-import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 
 function Login() {
     const { login, user } = useAuth();
@@ -39,8 +39,8 @@ function Login() {
             const response = await AuthServices.login(email, password);
 
             if (response.status === 200) {
-                const decodeUser = jwtDecode(response.data.token);
-                login(decodeUser);
+                // const decodeUser = jwtDecode();
+                login(response.data.token);
                 toast.success(response.data.message);
             } else {
                 toast.error(response.response.data.message);

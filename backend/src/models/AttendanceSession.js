@@ -9,6 +9,6 @@ const AttendanceSession = sequelize.define("attendance_sessions", {
     start_time: { type: DataTypes.DATE, allowNull: false },
     end_time: { type: DataTypes.DATE, allowNull: false },
     teacher_id: { type: DataTypes.INTEGER, allowNull: false, unique: true }
-});
+}, { timestamps: false });
 
 module.exports = AttendanceSession;

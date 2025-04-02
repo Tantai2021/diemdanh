@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const storedUser = sessionStorage.getItem("userToken");
         try {
-            setUser(JSON.parse(storedUser));
+            setUser(jwtDecode(storedUser));
         } catch (error) {
             console.error("Lỗi khi giải mã token:", error);
             sessionStorage.removeItem("userToken"); // Xóa token không hợp lệ
@@ -36,8 +36,8 @@ export const AuthProvider = ({ children }) => {
             console.log("Token không hợp lệ");
             return;
         }
-        sessionStorage.setItem("userToken", JSON.stringify(userData)); // Lưu vào sessionStorage
-        setUser(userData);
+        sessionStorage.setItem("userToken", userData); // Lưu vào sessionStorage
+        setUser(jwtDecode(userData));
         setError(null);
     };
 

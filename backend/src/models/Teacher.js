@@ -8,6 +8,6 @@ const Teacher = sequelize.define("teachers", {
     first_name: { type: DataTypes.STRING, allowNull: false },
     last_name: { type: DataTypes.STRING, allowNull: false },
     user_id: { type: DataTypes.INTEGER, allowNull: false },
-});
+}, { timestamps: false });
 
 module.exports = Teacher;
