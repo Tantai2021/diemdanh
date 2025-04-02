@@ -17,8 +17,6 @@ const Record = () => {
                 const response = await RecordServices.getAttendanceRecordsByClassId(class_id);
                 if (response) {
                     setRecords(response);
-                    console.log(response);
-
                 }
             } catch (error) {
                 console.error(error);
@@ -29,9 +27,8 @@ const Record = () => {
         }
     }, [class_id]);
 
-    console.log(records?.value)
-
     return <>
+        <h3>{records?.session_code}</h3>
         <Table striped bordered hover>
             <thead>
                 <tr>
@@ -46,7 +43,7 @@ const Record = () => {
                         <tr key={index}>
                             <td>{item.student.first_name}</td>
                             <td>{item.student.last_name}</td>
-                            <td>{item.status}</td>
+                            <td>{item.status === "Absent" ? "Vắng mặt" : "Đã điểm danh"}</td>
                         </tr>
                     ))}
                 </>) :

@@ -3,11 +3,13 @@ import React, { useEffect, useState } from "react";
 import { FaEye } from "react-icons/fa";
 import ClassesServices from "../../services/Classes";
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from "../../context/Auth";
 
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 
 const Home = () => {
+    const { user } = useAuth();
     const [classes, setClasses] = useState([]);
     const navigate = useNavigate();
 
@@ -25,7 +27,6 @@ const Home = () => {
     useEffect(() => {
         getClasses();
     }, []);
-    console.log(classes)
     return <>
         <h3 className="mt-3 mb-2">Thời Khóa Biểu</h3>
         <Table striped bordered hover>
@@ -46,7 +47,7 @@ const Home = () => {
                                 <td>{classItem.class_name}</td>
                                 <td>{classItem.start_date}</td>
                                 <td className="text-center">
-                                    <Button variant="outline-success" className="btn-sm" onClick={() => navigate(`attendance-record/${classItem.class_id}`)}><FaEye /></Button>
+                                    <Button variant="outline-success" className="btn-sm" onClick={() => user?.role === "student" ? navigate(`unauthorized`) : navigate(`attendance-record/${classItem.class_id}`)}><FaEye /></Button>
                                 </td>
                             </tr>
                         ))}
