@@ -9,6 +9,6 @@ const Student = sequelize.define("students", {
     last_name: { type: DataTypes.STRING, allowNull: false },
     phone: { type: DataTypes.INTEGER, allowNull: false },
     user_id: { type: DataTypes.INTEGER, allowNull: false },
-});
+}, { timestamps: false });
 
 module.exports = Student;
