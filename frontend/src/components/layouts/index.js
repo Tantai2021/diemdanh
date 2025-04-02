@@ -5,8 +5,6 @@ import { useAuth } from "../../context/Auth"; // Import useAuth để lấy thô
 
 const Layout = ({ children }) => {
     const { user, logout } = useAuth(); // Sử dụng useAuth để lấy thông tin người dùng
-    console.log(user);
-
     // Hàm để render các link trong sidebar dựa trên role của user
     const renderSidebarLinks = () => {
         if (!user) return null;

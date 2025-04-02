@@ -6,17 +6,25 @@ import { useAuth } from '../../context/Auth';
 import { Slide, ToastContainer, toast } from 'react-toastify';
 
 import AuthServices from '../../services/Auth';
-
+import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 function Login() {
+    const { login, user, loading } = useAuth();
+    const navigate = useNavigate();
     const [email, setEmail] = useState("DH52111700@student.stu.edu.vn");
     const [password, setPassword] = useState("DH52111700");
     const [validated, setValidated] = useState(false);
-    const { login, user } = useAuth();
-    
+
+    useEffect(() => {
+        if (user) {
+            const decodeUser = jwtDecode(user);
+            console.log(decodeUser);
+
+        }
+    }, [user, navigate]);
+
     const handleSubmit = async (event) => {
         event.preventDefault(); // Dừng việc gửi form
-        event.stopPropagation(); // Ngừng sự kiện propagation
-
         const form = event.currentTarget;
         if (form.checkValidity() === false) {
             setValidated(true);

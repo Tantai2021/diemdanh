@@ -1,6 +1,6 @@
 // src/context/AuthContext.js
-import { jwtDecode } from "jwt-decode";
 import React, { createContext, useState, useContext, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
 
 // Tạo context cho authentication
 const AuthContext = createContext();
@@ -17,33 +17,30 @@ export const AuthProvider = ({ children }) => {
     // Giả lập việc kiểm tra đăng nhập (ví dụ từ localStorage hoặc gọi API)
     useEffect(() => {
         const storedUser = sessionStorage.getItem("userToken");
-        if (storedUser) {
-            try {
-                setUser(jwtDecode(JSON.parse(storedUser).token));
-            } catch (error) {
-                console.error("Lỗi parse userToken:", error);
-                sessionStorage.removeItem("userToken");
-            }
+        try {
+            setUser(jwtDecode(JSON.parse(storedUser).token));
+        } catch (error) {
+            console.error("Lỗi khi giải mã token:", error);
+            sessionStorage.removeItem("userToken"); // Xóa token không hợp lệ
+            setUser(null);
         }
-
         setLoading(false);
     }, []);
     // Hàm để login, logout hoặc cập nhật thông tin người dùng
     const login = (userData) => {
-        if (!userData || !userData.token) {
+        if (!userData) {
             setError("Token không hợp lệ");
             console.log("Token không hợp lệ");
             return;
         }
-
+        setLoading(false);
         sessionStorage.setItem("userToken", JSON.stringify(userData)); // Lưu vào sessionStorage
-        setUser(userData);
+        setUser(userData.token);
         setError(null);
     };
 
     const logout = () => {
         setUser(null);
-        setLoading(true);
         sessionStorage.removeItem("userToken"); // Xóa thông tin người dùng khỏi sessionStorage
     };
 
