@@ -1,11 +1,13 @@
 const models = require("../models/index");
 const bcrypt = require("bcryptjs");
+const e = require("express");
 const jwt = require("jsonwebtoken");
 
 const User = {
     login: async (req, res) => {
         const { email, password } = req.body;
-
+        console.log(email);
+        console.log(password);
         try {
             // Tìm user theo email
             const user = await models.User.findOne({ where: { email } });
@@ -16,6 +18,7 @@ const User = {
 
             // Kiểm tra mật khẩu
             const isMatch = await bcrypt.compare(password, user.password);
+            console.log(isMatch);
             if (!isMatch) {
                 return res.status(401).json({ message: "Email hoặc mật khẩu không đúng!" });
             }
@@ -27,7 +30,7 @@ const User = {
                 { expiresIn: "7h" }
             );
 
-            res.json({ message: "Đăng nhập thành công!", token });
+            res.status(200).json({ message: "Đăng nhập thành công!", token });
         } catch (error) {
             res.status(500).json({ message: "Lỗi đăng nhập!" });
         }
