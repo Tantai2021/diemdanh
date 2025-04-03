@@ -53,7 +53,7 @@ const Student = {
 
         if (!student_code || !first_name || !last_name || !phone || !email || !user_id)
             res.status(404).json({ message: "Thiếu thông tin cần thiết" });
-        
+
         try {
             const student = await models.Student.findByPk(student_id);
             if (!student) {
@@ -80,6 +80,31 @@ const Student = {
             res.json({ message: "Xóa sinh viên thành công" });
         } catch (error) {
             res.status(500).json({ message: "Lỗi khi xóa sinh viên", error });
+        }
+    },
+
+    // 6. Lấy danh sách sinh viên chưa có trong buổi học session_id
+    getStudentsNotInSession: async (req, res) => {
+        try {
+            console.log(req.user);
+            const { session_id } = req.query;
+            if (!session_id)
+                return res.status(401).json({ message: "Không tìm thấy buổi học" });
+            const studentInSession = await models.AttendanceRecord.findAll({
+                where: { session_id: session_id },
+                attributes: ["student_id"]
+            })
+
+            const studentIdsInSession = studentInSession.map(student => student.student_id);
+
+            const allStudent = await models.Student.findAll();
+
+            const studentNotInSession = allStudent.filter(student => !studentIdsInSession.includes(student.student_id));
+
+            return res.status(200).json({ students: studentNotInSession });
+        } catch (error) {
+            console.log(error)
+            return res.status(200).json({ message: "Lỗi Server" });
         }
     }
 };

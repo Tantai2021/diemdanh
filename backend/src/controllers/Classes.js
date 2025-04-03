@@ -4,10 +4,8 @@ const models = require("../models/index");
 const Classes = {
     // 1. Lấy tất cả lớp học
     getAllClasses: async (req, res) => {
-        console.log("User info from token:", req.user);
         try {
             const classes = await models.Classes.findAll();
-            console.log("Classes from DB:", classes);
             return res.json({ classes: classes });
         } catch (error) {
             console.log(error);

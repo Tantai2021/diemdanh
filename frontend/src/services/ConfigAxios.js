@@ -9,7 +9,6 @@ const instance = axios.create({
         'Content-Type': 'application/json', // Đặt header mặc định cho request
     },
 });
-
 // Interceptors để thêm token hoặc xử lý các lỗi toàn cục
 instance.interceptors.request.use(
     (config) => {

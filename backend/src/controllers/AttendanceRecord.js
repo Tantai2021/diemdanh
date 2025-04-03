@@ -141,7 +141,7 @@ const AttendanceRecord = {
                         { teacher_id: teacher.teacher_id }
                     ]
                 },
-                attributes: ["id", "session_code"]
+                attributes: ["id", "session_code", "id"]
             });
 
             if (!session)
@@ -157,7 +157,11 @@ const AttendanceRecord = {
 
             if (!records || records.length === 0)
                 return res.status(401).json({ message: "Chưa thêm sinh viên vào buổi điểm danh" });
-            return res.status(200).json({ value: records, session_code: session.session_code });
+            return res.status(200).json({
+                value: records,
+                session_code: session.session_code,
+                session_id: session.id
+            });
         } catch (error) {
             console.log(error);
             return res.status(500).json({ message: "Lỗi khi lấy bản ghi điểm danh", error });
