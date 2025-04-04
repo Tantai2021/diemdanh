@@ -42,14 +42,19 @@ const AttendanceRecord = {
 
     // 3. Thêm bản ghi điểm danh mới
     createAttendanceRecord: async (req, res) => {
-        const { student_id, session_id, status } = req.body;
+        const { student_ids, session_id, status } = req.body;
+        if (!Array.isArray(student_ids) || student_ids.length === 0 || !session_id) {
+            return res.status(400).json({ message: "Danh sách sinh viên không hợp lệ" });
+        }
 
         try {
-            const newRecord = await models.AttendanceRecord.create({
+            const records = student_ids.map(student_id => ({
                 student_id,
                 session_id,
-                status // Có thể là "Present", "Absent", "Late", v.v.
-            });
+                status: status || "None"
+            }));
+
+            const newRecord = await models.AttendanceRecord.bulkCreate(records);
 
             res.status(201).json({ message: "Bản ghi điểm danh đã được tạo thành công", record: newRecord });
         } catch (error) {
@@ -79,18 +84,27 @@ const AttendanceRecord = {
     },
 
     // 5. Xóa bản ghi điểm danh
-    deleteAttendanceRecord: async (req, res) => {
-        const { record_id } = req.params;
+    bulkDeleteAttendanceRecord: async (req, res) => {
+        const { record_ids } = req.body;
+
+        if (!Array.isArray(record_ids) || record_ids.length === 0) {
+            return res.status(400).json({ message: "Danh sách bản ghi không hợp lệ" });
+        }
+
         try {
-            const record = await models.AttendanceRecord.findByPk(record_id);
-            if (!record) {
-                return res.status(404).json({ message: "Không tìm thấy bản ghi điểm danh" });
+            const deletedRecords = await models.AttendanceRecord.destroy({
+                where: {
+                    id: record_ids  // Chọn các bản ghi có id trong mảng record_ids
+                }
+            });
+
+            if (deletedRecords === 0) {
+                return res.status(404).json({ message: "Không tìm thấy bản ghi điểm danh nào để xóa" });
             }
 
-            await record.destroy();
-            res.json({ message: "Xóa bản ghi điểm danh thành công" });
+            return res.json({ message: `${deletedRecords} bản ghi điểm danh đã được xóa thành công` });
         } catch (error) {
-            res.status(500).json({ message: "Lỗi khi xóa bản ghi điểm danh", error });
+            return res.status(500).json({ message: "Lỗi khi xóa bản ghi điểm danh", error });
         }
     },
 
@@ -155,8 +169,6 @@ const AttendanceRecord = {
                 }
             });
 
-            if (!records || records.length === 0)
-                return res.status(401).json({ message: "Chưa thêm sinh viên vào buổi điểm danh" });
             return res.status(200).json({
                 value: records,
                 session_code: session.session_code,

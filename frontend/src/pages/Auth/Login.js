@@ -7,7 +7,6 @@ import { Slide, ToastContainer, toast } from 'react-toastify';
 
 import AuthServices from '../../services/Auth';
 import { useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
 
 function Login() {
     const { login, user } = useAuth();

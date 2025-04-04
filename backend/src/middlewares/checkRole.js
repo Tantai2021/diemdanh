@@ -3,8 +3,6 @@ const jwt = require("jsonwebtoken");
 // Middleware xác thực token
 const verifyToken = (req, res, next) => {
     const token = req.headers["authorization"]?.split(' ')[1];
-    console.log("Token nhận được", token);
-
     if (!token) {
         return res.status(403).json({ message: "Token không có" });
     }
@@ -16,7 +14,6 @@ const verifyToken = (req, res, next) => {
         req.user = decoded;  // Lưu thông tin người dùng vào reques
         next();  // Tiếp tục xử lý yêu cầu
     });
-    console.log("verify token")
 };
 
 // Middleware kiểm tra quyền admin
@@ -41,7 +38,6 @@ const checkAdminOrTeacher = (req, res, next) => {
         return res.status(403).json({ message: "Không có quyền admin hoặc giáo viên" });
     }
     next();  // Tiếp tục nếu là admin hoặc giáo viên
-    console.log("Check role called");
 };
 
 // Middleware kiểm tra quyền sở hữu sinh viên (dành cho trường hợp sinh viên tự chỉnh sửa thông tin)

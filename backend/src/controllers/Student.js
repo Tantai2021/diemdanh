@@ -86,7 +86,6 @@ const Student = {
     // 6. Lấy danh sách sinh viên chưa có trong buổi học session_id
     getStudentsNotInSession: async (req, res) => {
         try {
-            console.log(req.user);
             const { session_id } = req.query;
             if (!session_id)
                 return res.status(401).json({ message: "Không tìm thấy buổi học" });

@@ -1,13 +1,33 @@
+import React, { useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
-function CommonModal({ title, show, onHide, body }) {
+function CommonModal({ title, show, onHide, body, onSubmit }) {
+    const [hasMounted, setHasMounted] = useState(false);
+
+    useEffect(() => {
+        if (show && !hasMounted) {
+            console.log("📷 Modal mounted");
+            setHasMounted(true); // Chỉ set lần đầu khi modal mở
+        } else if (!show && hasMounted) {
+            console.log("📴 Modal unmounted");
+            setHasMounted(false); // Nếu modal đóng, sẽ unmount CameraPage
+        }
+    }, [show, hasMounted]);
+
+    const handleSubmit = () => {
+        if (onSubmit) {
+            onSubmit();
+        } else {
+            onHide();
+        }
+    }
 
     return (
         <Modal
             show={show}
             onHide={onHide}
-            size="lg"
+            size="md"
             aria-labelledby="contained-modal-title-vcenter"
             centered
             backdrop="static"
@@ -18,12 +38,16 @@ function CommonModal({ title, show, onHide, body }) {
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                {body}
+                {/* Only render body if it has been mounted */}
+                {hasMounted && body}
             </Modal.Body>
             <Modal.Footer>
                 <Button onClick={onHide}>Close</Button>
+                {onSubmit ?
+                    <Button onClick={handleSubmit}>Lưu</Button> : null}
             </Modal.Footer>
         </Modal>
     );
 };
+
 export default CommonModal;

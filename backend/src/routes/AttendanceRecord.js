@@ -23,6 +23,6 @@ router.post("/", MW.verifyToken, MW.checkAdminOrTeacher, AttendanceRecord.create
 router.put("/:record_id", MW.verifyToken, MW.checkAdminOrTeacher, AttendanceRecord.updateAttendanceRecord);
 
 // 6. Xóa bản ghi điểm danh
-router.delete("/:record_id", MW.verifyToken, MW.checkAdmin, AttendanceRecord.deleteAttendanceRecord);
+router.delete("/", MW.verifyToken, MW.checkAdminOrTeacher, AttendanceRecord.bulkDeleteAttendanceRecord);
 
 module.exports = router;

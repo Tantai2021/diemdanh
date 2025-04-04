@@ -10,6 +10,26 @@ const AttendanceRecord = {
             return response.data;
         } catch (error) {
             console.error(error);
+            return [];
+        }
+    },
+    bulkCreateAttendanceRecords: async (data) => {
+        try {
+            const response = await axios.post(`${endpoint}/`, data);
+            return response.data;
+        } catch (error) {
+            console.error(error);
+            return null;
+        }
+    },
+    bulkDeleteAttendanceRecords: async (record_ids) => {
+        try {
+            const response = await axios.delete(`${endpoint}/`, {
+                data: { record_ids }
+            });
+            return response.data;
+        } catch (error) {
+            console.error(error);
             return null;
         }
     }
