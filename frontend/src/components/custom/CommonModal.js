@@ -7,10 +7,8 @@ function CommonModal({ title, show, onHide, body, onSubmit }) {
 
     useEffect(() => {
         if (show && !hasMounted) {
-            console.log("📷 Modal mounted");
             setHasMounted(true); // Chỉ set lần đầu khi modal mở
         } else if (!show && hasMounted) {
-            console.log("📴 Modal unmounted");
             setHasMounted(false); // Nếu modal đóng, sẽ unmount CameraPage
         }
     }, [show, hasMounted]);

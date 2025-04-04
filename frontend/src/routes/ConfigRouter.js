@@ -12,6 +12,7 @@ import Classes from "../pages/Classes/index";
 import Attendance from "../pages/Attendance/index";
 import LoginPage from "../pages/Auth/Login";
 import Unauthorized from "../pages/Unauthorized";
+import Student from "../pages/Student/index";
 
 const ConfigRouter = () => {
 
@@ -21,7 +22,7 @@ const ConfigRouter = () => {
 
             <Route element={<Layout />}>
                 <Route path="/" element={<StudentRoutes />}>
-                    <Route index element={<Classes.List />} />
+                    <Route index path="attendance" element={<Student.Qrcode />} />
                 </Route>
                 <Route path="/admin" element={<AdminRoutes />}>
                     <Route index element={<Classes.List />} />
