@@ -42,11 +42,10 @@ const Record = () => {
     const handleOpenCamera = () => {
         setModalShow(true);
         setModalProps({
-            body: <CameraPage />,  // Truyền modalShow để camera biết khi nào cần mở
+            body: <CameraPage session={records?.session_id} />,  // Truyền modalShow để camera biết khi nào cần mở
             title: "Camera điểm danh",
         });
     };
-
     const handleOpenQrcode = () => {
         setModalShow(true);
         setModalProps({
@@ -94,11 +93,25 @@ const Record = () => {
         } else {
             setSelectedIds([]);
         }
+    };
+    const handleAttendaneceStatusChange = async (e, id) => {
+        try {
+            const response = await RecordServices.updateAttendanceRecord(id, e.target.value);
+            if (response) {
+                toast.success(response.message);
+                getAttendanceRecordsByClassId();
+            }
+        } catch (error) {
+            console.log(error);
+        }
     }
-
     useEffect(() => {
         if (class_id) {
             getAttendanceRecordsByClassId();
+            const interval = setInterval(() => {
+                getAttendanceRecordsByClassId();
+            }, 1000);
+            return () => clearInterval(interval);
         }
     }, [class_id]);
 
@@ -130,6 +143,7 @@ const Record = () => {
             }));
         }
     }, [returnValue]);
+
     return <>
         <div className="my-2">
             <Button variant="outline-success" className="me-2" onClick={handleAddStudent}> <FaPlusCircle /> </Button>
@@ -156,7 +170,12 @@ const Record = () => {
                                 <td> <input type="checkbox" value={item.id} checked={selectedIds.includes(item.id)} onChange={handleCheckboxChange} /></td>
                                 <td>{item.student.first_name}</td>
                                 <td>{item.student.last_name}</td>
-                                <td>{item.status === "Absent" ? "Vắng mặt" : item.status === "None" ? "Chưa điểm danh" : "Đã điểm danh"}</td>
+                                <td>
+                                    <select value={item.status} onChange={(e) => handleAttendaneceStatusChange(e, item.id)} className="form-select" aria-label="Default select example">
+                                        <option value={"None"}>Chưa điểm danh</option>
+                                        <option value={"Present"}>Đã điểm danh</option>
+                                    </select>
+                                </td>
                             </tr>
                         ))}
                     </>) :
@@ -167,7 +186,7 @@ const Record = () => {
 
                 </tbody >
             </Table >
-        </div>
+        </div >
 
         <CommonModal show={modalShow} onHide={() => setModalShow(false)} {...modalProps} />
         <ToastContainer

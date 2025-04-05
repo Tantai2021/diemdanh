@@ -32,6 +32,24 @@ const AttendanceRecord = {
             console.error(error);
             return null;
         }
-    }
+    },
+    updateAttendanceRecord: async (record_id, status) => {
+        try {
+            const response = await axios.put(`${endpoint}/`, { status, record_id });
+            return response.data;
+        } catch (error) {
+            console.error(error);
+            return null;
+        }
+    },
+    updateAttendanceRecordByStudentCode: async (student_code, session_id) => {
+        try {
+            const response = await axios.put(`${endpoint}/camera`, { student_code, session_id });
+            return response.data;
+        } catch (error) {
+            console.error(error);
+            return null;
+        }
+    },
 };
 export default AttendanceRecord;

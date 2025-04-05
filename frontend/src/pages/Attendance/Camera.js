@@ -1,7 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import jsQR from "jsqr";
+import { Slide, ToastContainer, toast } from 'react-toastify';
 
-const CameraPage = () => {
+
+import AttendanceRecord from "../../services/AttendanceRecord";
+const CameraPage = ({ session }) => {
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
     const streamRef = useRef(null);
@@ -57,7 +60,8 @@ const CameraPage = () => {
                 const code = jsQR(imageData.data, imageData.width, imageData.height);
 
                 if (code) {
-                    setQrData(code.data);  // Lấy dữ liệu từ mã QR
+                    const qrCode = code.data.substring(0, 10); // Giới hạn độ dài dữ liệu QR
+                    setQrData(qrCode);  // Lấy dữ liệu từ mã QR
                 }
                 requestAnimationFrame(scan);  // Quay lại quét tiếp
 
@@ -83,25 +87,36 @@ const CameraPage = () => {
 
     useEffect(() => {
         if (qrData) {
-           
-        }
-    }, [qrData]);
-
-    return (
+            const attendaneByCamera = async () => {
+                const response = await AttendanceRecord.updateAttendanceRecordByStudentCode(qrData, session);
+                if (response)
+                    toast.success(response.message);
+            }
+            attendaneByCamera();
+        };
+    }, [qrData]); // Chỉ gọi khi qrData thay đổi
+    return <>
         <div>
             {error && <p style={{ color: "red" }}>{error}</p>}
-            {qrData && (
-                <div>
-                    <h3>Mã QR quét được:</h3>
-                    <p>{qrData}</p>
-                </div>
-            )}
-            <>
-                <video ref={videoRef} className="w-100" autoPlay muted playsInline></video>
-                <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
-            </>
+            <video ref={videoRef} className="w-100" autoPlay muted playsInline></video>
+            <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
         </div>
-    );
+        <ToastContainer
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick={false}
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+            transition={Slide}
+            stacked
+        />
+    </>;
+
 };
 
 export default CameraPage;

@@ -64,8 +64,7 @@ const AttendanceRecord = {
 
     // 4. Cập nhật bản ghi điểm danh
     updateAttendanceRecord: async (req, res) => {
-        const { record_id } = req.params;
-        const { status } = req.body;
+        const { status, record_id } = req.body;
 
         try {
             const record = await models.AttendanceRecord.findByPk(record_id);
@@ -82,7 +81,41 @@ const AttendanceRecord = {
             res.status(500).json({ message: "Lỗi khi cập nhật bản ghi điểm danh", error });
         }
     },
+    updateAttendanceRecordByStudentCode: async (req, res) => {
+        const { student_code, session_id } = req.body;
+        if (!student_code || !session_id) {
+            return res.status(400).json({ message: "Thiếu thông tin cần thiết" });
+        }
+        try {
+            const student = await models.Student.findOne({
+                where: { student_code },
+            })
+            if (!student) {
+                return res.status(404).json({ message: "Không tìm thấy sinh viên" });
+            }
 
+            const record = await models.AttendanceRecord.findOne({
+                where: {
+                    [Op.and]: [
+                        { student_id: student.student_id },
+                        { session_id: session_id },
+                    ]
+                }
+            });
+            if (!record) {
+                return res.status(404).json({ message: "Không tìm thấy bản ghi điểm danh" });
+            }
+            if (record.status === "None") {
+                await record.update({
+                    status: "Present"
+                });
+            } else
+                return res.status(200).json({ message: "Sinh viên đã điểm danh rồi" });
+            return res.status(200).json({ message: `Đã điểm danh thành công sinh viên ${student.first_name}${student.last_name}`, record });
+        } catch (error) {
+            return res.status(500).json({ message: "Lỗi khi cập nhật bản ghi điểm danh", error });
+        }
+    },
     // 5. Xóa bản ghi điểm danh
     bulkDeleteAttendanceRecord: async (req, res) => {
         const { record_ids } = req.body;

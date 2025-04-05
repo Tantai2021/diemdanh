@@ -11,6 +11,33 @@ const Student = {
             console.log(error);
             return null;
         }
-    }
+    },
+    getAllStudents: async () => {
+        try {
+            const response = await axios.get(`${endpoint}/`);
+            return response?.data;
+        } catch (error) {
+            console.log(error);
+            return null;
+        }
+    },
+    createBulkQrcode: async () => {
+        try {
+            const response = await axios.post(`${endpoint}/create-bulk-qrcode`);
+            return response?.data;
+        } catch (error) {
+            console.log(error);
+            return null;
+        }
+    },
+    getQrcodeByUserId: async () => {
+        try {
+            const response = await axios.get(`${endpoint}/qr-code`);
+            return response?.data;
+        } catch (error) {
+            console.log(error);
+            return null;
+        }
+    },
 };
 export default Student;

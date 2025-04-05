@@ -25,7 +25,7 @@ const ConfigRouter = () => {
                     <Route index path="attendance" element={<Student.Qrcode />} />
                 </Route>
                 <Route path="/admin" element={<AdminRoutes />}>
-                    <Route index element={<Classes.List />} />
+                    <Route path="students" element={<Student.List />} />
                 </Route>
                 <Route path="/teacher" element={<TeacherRoutes />}>
                     <Route index element={<Classes.List />} />

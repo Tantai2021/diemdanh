@@ -1,36 +1,46 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { useAuth } from "../../../context/Auth"; // Sử dụng context để lấy thông tin người dùng
+import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "../../../context/Auth";
+import { FaUserGraduate, FaChalkboardTeacher, FaUsers, FaClipboardList } from "react-icons/fa";
+
 
 const Sidebar = () => {
-    const { user } = useAuth(); // Lấy thông tin người dùng từ context
+    const { user } = useAuth();
+    const location = useLocation();
+
+    const menuItems = {
+        admin: [
+            { to: "/admin/students", label: "Quản lý sinh viên", icon: <FaUserGraduate /> },
+            { to: "/admin/teachers", label: "Quản lý giảng viên", icon: <FaChalkboardTeacher /> },
+            { to: "/admin/classes", label: "Quản lý lớp học", icon: <FaUsers /> },
+            { to: "/admin/attendance", label: "Quản lý điểm danh", icon: <FaClipboardList /> }
+        ],
+        teacher: [
+            { to: "/classes", label: "Quản lý lớp học", icon: <FaUsers /> },
+            { to: "/teacher", label: "Thời khóa biểu", icon: <FaChalkboardTeacher /> },
+            { to: "/attendance", label: "Điểm danh", icon: <FaClipboardList /> }
+        ],
+        student: [
+            { to: "/attendance", label: "Điểm danh", icon: <FaClipboardList /> },
+            { to: "/profile", label: "Thông tin cá nhân", icon: <FaUserGraduate /> }
+        ]
+    };
+
+    const userMenu = menuItems[user?.role] || [];
 
     return (
-        <div className="sidebar border-2 border vh-100 pt-2 px-3">
-            <ul className="list-unstyled">
-                {user?.role === "admin" && (
-                    <>
-                        <li className="list-style-none mb-2"><Link className="text-decoration-none fs-5 text-black" to="/students">Quản lý sinh viên</Link></li>
-                        <li className="list-style-none mb-2"><Link className="text-decoration-none fs-5 text-black" to="/teachers">Quản lý giảng viên</Link></li>
-                        <li className="list-style-none mb-2"><Link className="text-decoration-none fs-5 text-black" to="/classes">Quản lý lớp học</Link></li>
-                        <li className="list-style-none mb-2"><Link className="text-decoration-none fs-5 text-black" to="/attendance">Quản lý điểm danh</Link></li>
-                    </>
-                )}
-
-                {user?.role === "teacher" && (
-                    <>
-                        <li className="list-style-none mb-2"><Link className="text-decoration-none fs-5 text-black" to="/classes">Quản lý lớp học</Link></li>
-                        <li className="list-style-none mb-2"><Link className="text-decoration-none fs-5 text-black" to="/teacher">Thời khóa biểu</Link></li>
-                        <li className="list-style-none mb-2"><Link className="text-decoration-none fs-5 text-black" to="/attendance">Điểm danh</Link></li>
-                    </>
-                )}
-
-                {user?.role === "student" && (
-                    <>
-                        <li className="list-style-none mb-2"><Link className="text-decoration-none fs-5 text-black" to="/attendance">Điểm danh</Link></li>
-                        <li className="list-style-none mb-2"><Link className="text-decoration-none fs-5 text-black" to="/profile">Thông tin cá nhân</Link></li>
-                    </>
-                )}
+        <div className="sidebar dark-theme shadow vh-100 p-3">
+            <ul className="list-unstyled" >
+                {userMenu.map((item, index) => (
+                    <li key={index}>
+                        <Link
+                            className={`text-decoration-none fs-5 sidebar-link ${location.pathname === item.to ? "active" : ""}`}
+                            to={item.to}
+                        >
+                            <span className="icon">{item.icon}</span> {item.label}
+                        </Link>
+                    </li>
+                ))}
             </ul>
         </div>
     );

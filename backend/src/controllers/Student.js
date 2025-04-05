@@ -1,5 +1,6 @@
 const e = require("express");
 const models = require("../models/index");
+const QRCode = require('qrcode');
 
 const Student = {
     // 1. Lấy danh sách tất cả sinh viên
@@ -104,6 +105,48 @@ const Student = {
         } catch (error) {
             console.log(error)
             return res.status(200).json({ message: "Lỗi Server" });
+        }
+    },
+    createBulkQrcode: async (req, res) => {
+        try {
+            const student = await models.Student.findAll();
+            if (!student) {
+                return res.status(404).json({ message: "Không tìm thấy sinh viên" });
+            }
+            const qrcodes = await Promise.all(student.map(async (student) => {
+                const qrcode = await QRCode.toDataURL(student.student_code);
+                return { student_id: student.student_id, qrcode };
+            }));
+
+            const insertQrcode = await models.Qrcode.bulkCreate(qrcodes.map(qrcode => ({ student_id: qrcode.student_id, qr_code: qrcode.qrcode })));
+            if (!insertQrcode) {
+                return res.status(404).json({ message: "Không thể tạo QR code" });
+            }
+
+            return res.status(200).json({ message: "Tạo QR code thành công", qrcodes });
+
+        } catch (error) {
+            console.log(error)
+            return res.status(200).json({ message: "Lỗi Server" });
+        }
+    },
+    getQrcodeByUserId: async (req, res) => {
+        const userId = req.user.id;
+        try {
+            const student = await models.Student.findOne({
+                where: { user_id: userId }, attributes: ["student_id"]
+            });
+            console.log(student.student_id);
+            const qrcode = await models.Qrcode.findOne({
+                where: { student_id: student.student_id },
+                attributes: ["qr_code", "student_id"]
+            });
+            if (!qrcode) {
+                return res.status(404).json({ message: "Không tìm thấy QR code cho sinh viên này" });
+            }
+            return res.status(200).json(qrcode);
+        } catch (error) {
+            return res.status(500).json({ message: "Lỗi khi lấy QR code", error });
         }
     }
 };
