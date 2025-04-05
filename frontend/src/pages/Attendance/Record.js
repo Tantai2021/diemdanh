@@ -143,9 +143,11 @@ const Record = () => {
             }));
         }
     }, [returnValue]);
-
     return <>
-        <div className="my-2">
+        <div className="mt-3 mb-4">
+            <h3 className="fs-5">Môn học: {records?.class_name}</h3>
+        </div>
+        <div className="my-2 border border-1 p-4 rounded shadow">
             <Button variant="outline-success" className="me-2" onClick={handleAddStudent}> <FaPlusCircle /> </Button>
             <Button variant="outline-success" className="me-2" onClick={handleOpenCamera}> <FaCamera /> </Button>
             <Button variant="outline-success" className="me-2" onClick={handleOpenQrcode}> <FaQrcode /> </Button>
@@ -153,25 +155,24 @@ const Record = () => {
         </div>
 
         <div>
-            <h3>{records?.session_code}</h3>
             <Table striped bordered hover>
                 <thead>
                     <tr>
-                        <th> <input type="checkbox" checked={selectedIds.length === records?.value?.length} onChange={handleCheckboxAll} /> </th>
-                        <th>Họ lót</th>
-                        <th>Tên</th>
-                        <th>Trạng thái</th>
+                        <th className="text-center"> <input type="checkbox" checked={selectedIds.length === records?.value?.length} onChange={handleCheckboxAll} /> </th>
+                        <th className="text-center">Họ lót</th>
+                        <th className="text-center">Tên</th>
+                        <th className="text-center">Trạng thái</th>
                     </tr>
                 </thead>
                 <tbody>
                     {records?.value?.length > 0 ? (<>
                         {records?.value?.map((item, index) => (
                             <tr key={index}>
-                                <td> <input type="checkbox" value={item.id} checked={selectedIds.includes(item.id)} onChange={handleCheckboxChange} /></td>
-                                <td>{item.student.first_name}</td>
-                                <td>{item.student.last_name}</td>
-                                <td>
-                                    <select value={item.status} onChange={(e) => handleAttendaneceStatusChange(e, item.id)} className="form-select" aria-label="Default select example">
+                                <td className="text-center align-middle"> <input type="checkbox" value={item.id} checked={selectedIds.includes(item.id)} onChange={handleCheckboxChange} /></td>
+                                <td className="text-start align-middle">{item.student.first_name}</td>
+                                <td className="text-center align-middle">{item.student.last_name}</td>
+                                <td className="text-center align-middle w-25">
+                                    <select value={item.status} onChange={(e) => handleAttendaneceStatusChange(e, item.id)} className="form-select">
                                         <option value={"None"}>Chưa điểm danh</option>
                                         <option value={"Present"}>Đã điểm danh</option>
                                     </select>

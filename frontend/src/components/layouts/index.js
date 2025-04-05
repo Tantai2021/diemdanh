@@ -1,27 +1,27 @@
 // src/components/Layout.js
 import React from "react";
-import { Link } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { Outlet } from "react-router-dom";
 
 import { useAuth } from "../../context/Auth"; // Import useAuth để lấy thông tin người dùng
-import NavWeb from "./partials/NavWeb";
-import Sidebar from "./partials/Sidebar";
 
-const Layout = ({ children }) => {
+import Sidebar from "./partials/Sidebar/Sidebar";
+
+const Layout = () => {
     const { loading } = useAuth();
 
     if (loading)
         return <div>Loading...</div>;
 
     return <>
-        <Container>
-            <NavWeb />
+        <Container fluid="sm">
             <Row>
-                <Col xl={3}><Sidebar /></Col>
-                <Col xl={9}><Outlet /></Col>
+                <Col xl={3} md={4}><Sidebar /></Col>
+                <Col xl={9} md={8} >
+                    <Outlet />
+                </Col>
             </Row>
         </Container>
     </>;

@@ -1,0 +1,18 @@
+/* Thêm nhấn mạnh cho active link */
+.active {
+    position: relative;
+    font-weight: bold;
+    font-style: italic;
+    /* Màu sắc cho active link */
+}
+
+.active::after {
+    content: "";
+    display: block;
+    position: absolute;
+    left: 0;
+    bottom: -3px;
+    width: 100%;
+    height: 1px;
+    background-color: white
+}

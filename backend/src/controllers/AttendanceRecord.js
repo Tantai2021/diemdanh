@@ -173,6 +173,12 @@ const AttendanceRecord = {
             return res.status(401).json({ message: "Thiếu thông tin cần thiết" });
 
         try {
+            const classes = await models.Classes.findOne({
+                where: { class_id: class_id },
+            })
+            if (!classes)
+                return res.status(401).json({ message: "Không tìm thấy lớp học" });
+
             const teacher = await models.Teacher.findOne({
                 where: { user_id: user.id },
                 attributes: ["teacher_id"]
@@ -201,11 +207,14 @@ const AttendanceRecord = {
                     attributes: ["first_name", "last_name"]
                 }
             });
+            if (records.length === 0)
+                return res.status(401).json({ message: "Không có bản ghi điểm danh nào" });
 
             return res.status(200).json({
                 value: records,
                 session_code: session.session_code,
-                session_id: session.id
+                session_id: session.id,
+                class_name: classes.class_name,
             });
         } catch (error) {
             console.log(error);
