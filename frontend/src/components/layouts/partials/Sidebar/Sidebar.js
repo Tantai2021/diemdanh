@@ -25,7 +25,7 @@ const Sidebar = () => {
         teacher: [
             { to: "/teacher/student-manager", label: "Tra cứu sinh viên", icon: <FaUsers /> },
             { to: "/teacher/timetable", label: "Thời khóa biểu", icon: <FaChalkboardTeacher /> },
-            { to: "/teacher/attendance", label: "Điểm danh", icon: <FaClipboardList /> }
+            // { to: "/teacher/attendance", label: "Điểm danh", icon: <FaClipboardList /> }
         ],
         student: [
             { to: "/qr-code", label: "Mã QR", icon: <FaClipboardList /> },
