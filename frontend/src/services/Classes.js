@@ -23,6 +23,15 @@ const ClassesServices = {
             return null;
         }
     },
+    getClassByTeacherId: async () => {
+        try {
+            const response = await axios.get(`${endpoint}/teacher`);
+            return response.data;
+        } catch (error) {
+            console.error(error);
+            return null;
+        }
+    }
 };
 
 export default ClassesServices;

@@ -39,5 +39,14 @@ const Student = {
             return null;
         }
     },
+    getProfile: async () => {
+        try {
+            const response = await axios.get(`${endpoint}/profile`);
+            return response?.data;
+        } catch (error) {
+            console.log(error);
+            return null;
+        }
+    }
 };
 export default Student;

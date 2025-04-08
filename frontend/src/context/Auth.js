@@ -32,8 +32,7 @@ export const AuthProvider = ({ children }) => {
     // Hàm để login, logout hoặc cập nhật thông tin người dùng
     const login = (userData) => {
         if (!userData) {
-            setError("Token không hợp lệ");
-            console.log("Token không hợp lệ");
+            setError("Vui lòng đăng nhập");
             return;
         }
         sessionStorage.setItem("userToken", userData); // Lưu vào sessionStorage

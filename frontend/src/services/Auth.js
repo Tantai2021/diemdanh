@@ -2,10 +2,14 @@
 import axios from "./ConfigAxios";
 
 const endpoint = process.env.REACT_APP_ENDPOINT_AUTH;
+console.log(endpoint);
+
 const AuthServices = {
     login: async (email, password) => {
         try {
             // Gọi API đăng nhập với email và password
+            console.log(email, password);
+
             const response = await axios.post(`${endpoint}/login`, { email, password });
             return response;
         } catch (error) {

@@ -10,7 +10,7 @@ const AttendanceRecord = {
             return response.data;
         } catch (error) {
             console.error(error);
-            return [];
+            return null;
         }
     },
     bulkCreateAttendanceRecords: async (data) => {
@@ -33,6 +33,7 @@ const AttendanceRecord = {
             return null;
         }
     },
+
     updateAttendanceRecord: async (record_id, status) => {
         try {
             const response = await axios.put(`${endpoint}/`, { status, record_id });
@@ -49,6 +50,14 @@ const AttendanceRecord = {
         } catch (error) {
             console.error(error);
             return null;
+        }
+    },
+    updateAttendanceRecordBySessionCode: async (session_code) => {
+        try {
+            const response = await axios.put(`${endpoint}/camera-student`, { session_code });
+            return response.data;
+        } catch (error) {
+            return error?.response;
         }
     },
 };

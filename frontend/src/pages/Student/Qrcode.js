@@ -10,8 +10,6 @@ const Home = () => {
     const fetchQrCode = async () => {
         try {
             const response = await StudentService.getQrcodeByUserId();
-            console.log(response);
-
             if (response) {
                 setStudent(response);
             }

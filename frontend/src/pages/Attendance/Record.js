@@ -4,6 +4,7 @@ import { FaPlusCircle, FaCamera, FaQrcode, FaTrashAlt } from "react-icons/fa";
 import { useParams } from 'react-router-dom';
 import { Slide, ToastContainer, toast } from 'react-toastify';
 import RecordServices from "../../services/AttendanceRecord";
+import SessionServices from "../../services/AttendanceSession";
 
 // REACT BOOTSTRAP
 import Table from 'react-bootstrap/Table';
@@ -17,25 +18,32 @@ import QrcodePage from "../../pages/Attendance/Qrcode";
 
 const Record = () => {
     const { class_id } = useParams();
-    const [records, setRecords] = useState([]);
+    const [records, setRecords] = useState(null);
     const [modalShow, setModalShow] = useState(false);
     const [modalProps, setModalProps] = useState(null);
     const [returnValue, setReturnValue] = useState(null);
     const [selectedIds, setSelectedIds] = useState([]);
+    const sessionCreatedRef = useRef(false);
+
     const getAttendanceRecordsByClassId = async () => {
         try {
             const response = await RecordServices.getAttendanceRecordsByClassId(class_id);
             if (response) {
                 setRecords(response);
+            } else if (!sessionCreatedRef.current) {
+                sessionCreatedRef.current = true;
+                SessionServices.createAttendanceSession(class_id);
             }
         } catch (error) {
             console.error(error);
         }
     };
+    console.log(records);
+
     const handleAddStudent = () => {
         setModalShow(true);
         setModalProps({
-            body: <StudentNotInSession session={records.session_id} returnValue={(value) => setReturnValue(value)} />,
+            body: <StudentNotInSession session={records?.session_id} returnValue={(value) => setReturnValue(value)} />,
             title: "Thêm sinh viên vào lớp",
         });
     };
@@ -49,7 +57,7 @@ const Record = () => {
     const handleOpenQrcode = () => {
         setModalShow(true);
         setModalProps({
-            body: <QrcodePage />,
+            body: <QrcodePage session={records?.session_code} />,
             title: "Qrcode điểm danh"
         });
     };
@@ -114,7 +122,6 @@ const Record = () => {
             return () => clearInterval(interval);
         }
     }, [class_id]);
-
     useEffect(() => {
         if (returnValue !== null) {
             setModalProps(prevProps => ({
@@ -143,9 +150,10 @@ const Record = () => {
             }));
         }
     }, [returnValue]);
+
     return <>
         <div className="mt-3 mb-4">
-            <h3 className="fs-5">Môn học: {records?.class_name}</h3>
+            <h3 className="fs-5">Môn học: {records?.class?.class_name}</h3>
         </div>
         <div className="my-2 border border-1 p-4 rounded shadow">
             <Button variant="outline-success" className="me-2" onClick={handleAddStudent}> <FaPlusCircle /> </Button>
@@ -155,10 +163,12 @@ const Record = () => {
         </div>
 
         <div>
+            <h3 className="fs-5 mt-3">Danh sách sinh viên trong lớp học</h3>
             <Table striped bordered hover>
                 <thead>
                     <tr>
                         <th className="text-center"> <input type="checkbox" checked={selectedIds.length === records?.value?.length} onChange={handleCheckboxAll} /> </th>
+                        <th className="text-center">STT</th>
                         <th className="text-center">Họ lót</th>
                         <th className="text-center">Tên</th>
                         <th className="text-center">Trạng thái</th>
@@ -169,6 +179,7 @@ const Record = () => {
                         {records?.value?.map((item, index) => (
                             <tr key={index}>
                                 <td className="text-center align-middle"> <input type="checkbox" value={item.id} checked={selectedIds.includes(item.id)} onChange={handleCheckboxChange} /></td>
+                                <td className="text-center align-middle">{index + 1}</td>
                                 <td className="text-start align-middle">{item.student.first_name}</td>
                                 <td className="text-center align-middle">{item.student.last_name}</td>
                                 <td className="text-center align-middle w-25">
@@ -181,7 +192,7 @@ const Record = () => {
                         ))}
                     </>) :
                         (<tr>
-                            <td colSpan="4" className="text-center">Chưa có sinh viên nào trong lớp</td>
+                            <td colSpan="5" className="text-center">Chưa có sinh viên nào trong lớp</td>
                         </tr>)}
 
 
@@ -201,7 +212,6 @@ const Record = () => {
             draggable
             pauseOnHover
             theme="light"
-            transition={Slide}
             stacked
         />
     </>;

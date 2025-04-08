@@ -78,12 +78,18 @@ const Classes = {
     },
     // 6. Lấy lớp học theo teacher_id
     getClassesByTeacherId: async (req, res) => {
-        const { teacher_id } = req.params; // Lấy teacher_id từ tham số route
+        const user = req.user; // Lấy teacher_id từ tham số route
 
         try {
+            const teacher = await models.Teacher.findOne({
+                where: { user_id: user.id }
+            })
+            if (!teacher)
+                return res.status(404).json({ message: "Không tìm thấy giáo viên này" });
+
             // Tìm tất cả lớp học của giáo viên theo teacher_id
             const classes = await models.Classes.findAll({
-                where: { teacher_id }
+                where: { teacher_id: teacher.teacher_id }
             });
 
             // Nếu không tìm thấy lớp học nào
@@ -91,9 +97,9 @@ const Classes = {
                 return res.status(404).json({ message: "Không có lớp học nào của giáo viên này." });
             }
 
-            res.json(classes); // Trả về danh sách lớp học
+            return res.status(200).json(classes); // Trả về danh sách lớp học
         } catch (error) {
-            res.status(500).json({ message: "Lỗi khi lấy lớp học theo mã giáo viên", error });
+            return res.status(500).json({ message: "Lỗi khi lấy lớp học theo mã giáo viên", error });
         }
     }
 };

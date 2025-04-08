@@ -14,16 +14,18 @@ const Student = {
     },
 
     // 2. Lấy thông tin một sinh viên theo ID
-    getStudentById: async (req, res) => {
-        const { student_id } = req.params;
+    getProfile: async (req, res) => {
+        const user = req.user;
         try {
-            const student = await models.Student.findByPk(student_id);
+            const student = await models.Student.findOne({
+                where: { user_id: user.id },
+            });
             if (!student) {
                 return res.status(404).json({ message: "Không tìm thấy sinh viên" });
             }
-            res.json(student);
+            return res.json(student);
         } catch (error) {
-            res.status(500).json({ message: "Lỗi khi lấy thông tin sinh viên", error });
+            return res.status(500).json({ message: "Lỗi khi lấy thông tin sinh viên", error });
         }
     },
 

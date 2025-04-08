@@ -6,6 +6,8 @@ import StudentService from "../../services/Student";
 const StudentNotInSession = (props) => {
     const [students, setStudents] = useState([]);
     const [selectedIds, setSelectedIds] = useState([]);
+    console.log(props.session);
+    
     useEffect(() => {
         const getStudentNotInSesion = async () => {
             try {

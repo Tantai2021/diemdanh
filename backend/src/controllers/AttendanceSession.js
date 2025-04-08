@@ -1,5 +1,6 @@
 const express = require("express");
 const models = require("../models/index");
+const { NOW } = require("sequelize");
 
 const AttendanceSession = {
     // 1. Lấy tất cả buổi điểm danh
@@ -28,19 +29,30 @@ const AttendanceSession = {
 
     // 3. Thêm buổi điểm danh mới
     createSession: async (req, res) => {
-        const { session_code, class_id, date, start_time, end_time, teacher_id } = req.body;
+        const { class_id } = req.body;
+        const user = req.user;
+
+        if (!class_id)
+            return res.status(404).json({ message: "Thiếu thông tin cần thiết" });
         try {
+            const classes = await models.Classes.findOne({ where: { class_id: class_id } });
+            if (!classes) return res.status(401).json({ message: "Lớp học không tồn tại" });
+            const teacher = await models.Teacher.findOne({ where: { user_id: user.id } });
+            if (!teacher) return res.status(401).json({ message: "Không tìm thấy giáo viên" });
+            const existSession = await models.AttendanceSession.findOne({ where: { class_id: class_id } });
+            if (existSession)
+                return res.status(400).json({ message: "Buổi điểm danh đã tồn tại" });
             const newSession = await models.AttendanceSession.create({
-                session_code,
-                class_id,
-                date,
-                start_time,
-                end_time,
-                teacher_id
+                session_code: classes.class_code,
+                class_id: classes.class_id,
+                date: classes.start_date,
+                start_time: NOW(),
+                end_time: NOW(),
+                teacher_id: teacher.teacher_id
             });
-            res.status(201).json({ message: "Buổi điểm danh đã được tạo thành công", session: newSession });
+            return res.status(201).json({ message: "Buổi điểm danh đã được tạo thành công", session: newSession });
         } catch (error) {
-            res.status(500).json({ message: "Lỗi khi tạo buổi điểm danh", error });
+            return res.status(500).json({ message: "Lỗi khi tạo buổi điểm danh", error });
         }
     },
 

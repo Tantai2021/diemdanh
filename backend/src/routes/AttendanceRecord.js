@@ -22,6 +22,7 @@ router.post("/", MW.verifyToken, MW.checkAdminOrTeacher, AttendanceRecord.create
 // 5. Cập nhật bản ghi điểm danh
 router.put("/", MW.verifyToken, MW.checkAdminOrTeacher, AttendanceRecord.updateAttendanceRecord);
 router.put("/camera", MW.verifyToken, MW.checkAdminOrTeacher, AttendanceRecord.updateAttendanceRecordByStudentCode);
+router.put("/camera-student", MW.verifyToken, AttendanceRecord.updateAttendanceRecordBySessionCode);
 
 // 6. Xóa bản ghi điểm danh
 router.delete("/", MW.verifyToken, MW.checkAdminOrTeacher, AttendanceRecord.bulkDeleteAttendanceRecord);

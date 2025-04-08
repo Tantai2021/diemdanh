@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../../context/Auth";
 import { Button, Offcanvas } from 'react-bootstrap';
-import { FaUserGraduate, FaChalkboardTeacher, FaUsers, FaClipboardList, FaSignInAlt, FaSignOutAlt, FaList } from "react-icons/fa";
+import { FaUserGraduate, FaChalkboardTeacher, FaUsers, FaClipboardList, FaSignInAlt, FaSignOutAlt, FaList, FaCamera } from "react-icons/fa";
 
 import styles from "./Sidebar.module.css";
 const Sidebar = () => {
@@ -23,12 +23,13 @@ const Sidebar = () => {
             { to: "/admin/attendance", label: "Quản lý điểm danh", icon: <FaClipboardList /> }
         ],
         teacher: [
-            { to: "/classes", label: "Quản lý lớp học", icon: <FaUsers /> },
-            { to: "/teacher", label: "Thời khóa biểu", icon: <FaChalkboardTeacher /> },
-            { to: "/attendance", label: "Điểm danh", icon: <FaClipboardList /> }
+            { to: "/teacher/student-manager", label: "Tra cứu sinh viên", icon: <FaUsers /> },
+            { to: "/teacher/timetable", label: "Thời khóa biểu", icon: <FaChalkboardTeacher /> },
+            { to: "/teacher/attendance", label: "Điểm danh", icon: <FaClipboardList /> }
         ],
         student: [
-            { to: "/attendance", label: "Điểm danh", icon: <FaClipboardList /> },
+            { to: "/qr-code", label: "Mã QR", icon: <FaClipboardList /> },
+            { to: "/camera", label: "Quét mã", icon: <FaCamera /> },
             { to: "/profile", label: "Thông tin cá nhân", icon: <FaUserGraduate /> }
         ]
     };

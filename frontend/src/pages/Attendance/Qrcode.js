@@ -1,10 +1,11 @@
 import React from "react";
 import { QRCodeSVG } from "qrcode.react";
 
-const Qrcode = ({ text = "https://example.com" }) => {
+const Qrcode = ({ session }) => {
+
     return (
         <div style={{ textAlign: "center", marginTop: 20 }}>
-            <QRCodeSVG value={text} size={200} />
+            <QRCodeSVG value={session.toString()} size={200} />
         </div>
     );
 };

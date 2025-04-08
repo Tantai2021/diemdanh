@@ -19,17 +19,18 @@ const ConfigRouter = () => {
     return (
         <Routes>
             {/* Private routes */}
-
             <Route element={<Layout />}>
                 <Route path="/" element={<StudentRoutes />}>
-                    <Route index path="attendance" element={<Student.Qrcode />} />
+                    <Route path="qr-code" element={<Student.Qrcode />} />
+                    <Route path="camera" element={<Student.Camera />} />
+                    <Route path="profile" element={<Student.Profile />} />
                 </Route>
                 <Route path="/admin" element={<AdminRoutes />}>
                     <Route path="students" element={<Student.List />} />
                 </Route>
                 <Route path="/teacher" element={<TeacherRoutes />}>
-                    <Route index element={<Classes.List />} />
-                    <Route path="attendance-record/:class_id" element={<Attendance.Record />} />
+                    <Route path="timetable" element={<Classes.List />} />
+                    <Route path="timetable/record/:class_id" element={<Attendance.Record />} />
                 </Route>
             </Route>
 

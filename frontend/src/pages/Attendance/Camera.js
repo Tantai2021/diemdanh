@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import jsQR from "jsqr";
 import { Slide, ToastContainer, toast } from 'react-toastify';
 
-
 import AttendanceRecord from "../../services/AttendanceRecord";
 const CameraPage = ({ session }) => {
     const videoRef = useRef(null);
@@ -60,8 +59,7 @@ const CameraPage = ({ session }) => {
                 const code = jsQR(imageData.data, imageData.width, imageData.height);
 
                 if (code) {
-                    const qrCode = code.data.substring(0, 10); // Giới hạn độ dài dữ liệu QR
-                    setQrData(qrCode);  // Lấy dữ liệu từ mã QR
+                    setQrData(code.data);  // Lấy dữ liệu từ mã QR
                 }
                 requestAnimationFrame(scan);  // Quay lại quét tiếp
 
@@ -87,14 +85,16 @@ const CameraPage = ({ session }) => {
 
     useEffect(() => {
         if (qrData) {
+            const dataQrcode = qrData.split("_")[0];
+
             const attendaneByCamera = async () => {
-                const response = await AttendanceRecord.updateAttendanceRecordByStudentCode(qrData, session);
+                const response = await AttendanceRecord.updateAttendanceRecordByStudentCode(dataQrcode, session);
                 if (response)
                     toast.success(response.message);
             }
             attendaneByCamera();
         };
-    }, [qrData]); // Chỉ gọi khi qrData thay đổi
+    }, [qrData]); // Chỉ gọi khi qrData thay đổi\
     return <>
         <div>
             {error && <p style={{ color: "red" }}>{error}</p>}

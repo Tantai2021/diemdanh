@@ -116,6 +116,49 @@ const AttendanceRecord = {
             return res.status(500).json({ message: "Lỗi khi cập nhật bản ghi điểm danh", error });
         }
     },
+    updateAttendanceRecordBySessionCode: async (req, res) => {
+        const { session_code } = req.body;
+        const user = req.user;
+        console.log(user)
+        if (!session_code) {
+            return res.status(400).json({ message: "Thiếu thông tin cần thiết" });
+        }
+        try {
+            const student = await models.Student.findOne({
+                where: { user_id: user.id },
+            })
+            if (!student) {
+                return res.status(404).json({ message: "Không tìm thấy sinh viên" });
+            }
+            const session = await models.AttendanceSession.findOne({
+                where: { session_code },
+                attributes: ["id"]
+            });
+            if (!session)
+                return res.status(404).json({ message: "Không tìm thấy buổi điểm danh" });
+
+            const record = await models.AttendanceRecord.findOne({
+                where: {
+                    [Op.and]: [
+                        { student_id: student.student_id },
+                        { session_id: session.id },
+                    ]
+                }
+            });
+            if (!record) {
+                return res.status(404).json({ message: "Sinh viên chưa vào lớp" });
+            }
+            if (record.status === "None") {
+                await record.update({
+                    status: "Present"
+                });
+            } else
+                return res.status(200).json({ message: "Sinh viên đã điểm danh rồi" });
+            return res.status(200).json({ message: `Đã điểm danh thành công sinh viên ${student.first_name}${student.last_name}`, record });
+        } catch (error) {
+            return res.status(500).json({ message: "Lỗi khi cập nhật bản ghi điểm danh", error });
+        }
+    },
     // 5. Xóa bản ghi điểm danh
     bulkDeleteAttendanceRecord: async (req, res) => {
         const { record_ids } = req.body;
@@ -173,9 +216,12 @@ const AttendanceRecord = {
             return res.status(401).json({ message: "Thiếu thông tin cần thiết" });
 
         try {
+            const classId = parseInt(class_id);
             const classes = await models.Classes.findOne({
-                where: { class_id: class_id },
+                where: { class_id: classId },
             })
+
+
             if (!classes)
                 return res.status(401).json({ message: "Không tìm thấy lớp học" });
 
@@ -190,16 +236,16 @@ const AttendanceRecord = {
             const session = await models.AttendanceSession.findOne({
                 where: {
                     [Op.and]: [
-                        { class_id: class_id },
+                        { class_id: classId },
                         { teacher_id: teacher.teacher_id }
                     ]
                 },
-                attributes: ["id", "session_code", "id"]
+                attributes: ["id", "session_code"]
             });
-
             if (!session)
                 return res.status(401).json({ message: "Chưa tạo buổi điểm danh" });
 
+            console.log(session);
             let records = await models.AttendanceRecord.findAll({
                 where: { session_id: session.id },
                 include: {
@@ -207,14 +253,12 @@ const AttendanceRecord = {
                     attributes: ["first_name", "last_name"]
                 }
             });
-            if (records.length === 0)
-                return res.status(401).json({ message: "Không có bản ghi điểm danh nào" });
 
             return res.status(200).json({
                 value: records,
                 session_code: session.session_code,
                 session_id: session.id,
-                class_name: classes.class_name,
+                class: classes
             });
         } catch (error) {
             console.log(error);

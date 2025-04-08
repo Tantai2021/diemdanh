@@ -40,13 +40,6 @@ const checkAdminOrTeacher = (req, res, next) => {
     next();  // Tiếp tục nếu là admin hoặc giáo viên
 };
 
-// Middleware kiểm tra quyền sở hữu sinh viên (dành cho trường hợp sinh viên tự chỉnh sửa thông tin)
-const checkStudentOwner = (req, res, next) => {
-    const { student_id } = req.params;
-    if (req.user.id !== student_id && req.user.role !== "admin") {
-        return res.status(403).json({ message: "Không có quyền chỉnh sửa thông tin sinh viên này" });
-    }
-    next();  // Tiếp tục nếu là sinh viên của chính họ hoặc admin
-};
 
-module.exports = { verifyToken, checkAdmin, checkTeacher, checkAdminOrTeacher, checkStudentOwner };
+
+module.exports = { verifyToken, checkAdmin, checkTeacher, checkAdminOrTeacher,  };

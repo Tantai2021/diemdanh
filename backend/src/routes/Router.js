@@ -1,4 +1,3 @@
-const express = require("express");
 const UserRoutes = require("./User");
 const StudentRoutes = require("./Student");
 const ClassesRoutes = require("./Classes");
