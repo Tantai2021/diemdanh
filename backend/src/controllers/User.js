@@ -20,9 +20,12 @@ const User = {
                 return res.status(401).json({ message: "Email hoặc mật khẩu không đúng!" }); // Sử dụng return để dừng tiếp tục xử lý
             }
 
+            const userInfo = user.role === 'teacher'
+                ? await await models.Teacher.findOne({ where: { user_id: user.id } })
+                : await await models.Student.findOne({ where: { user_id: user.id } })
             // Tạo token JWT
             const token = jwt.sign(
-                { id: user.id, email: user.email, role: user.role },
+                { id: user.id, email: user.email, role: user.role, info: userInfo },
                 process.env.SECRET_KEY, // Thay thế bằng SECRET_KEY thực tế
                 { expiresIn: "7h" }
             );

@@ -24,7 +24,7 @@ const Home = () => {
     }, []);;
     return <>
         <div >
-            <img className="w-50" src={student?.qr_code} />
+            <img className="w-25" src={student?.qr_code} />
         </div>
     </>;
 };

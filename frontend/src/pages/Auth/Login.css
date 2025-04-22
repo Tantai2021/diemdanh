@@ -1,0 +1,57 @@
+.login-container {
+    background: linear-gradient(145deg, #2c3e50, #34495e);
+    padding: 1rem;
+}
+
+.card {
+    background-color: #ffffff;
+    border: none;
+}
+
+.password-input {
+    position: relative;
+}
+
+.password-input .eye-icon {
+    cursor: pointer;
+    line-height: 1;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    right: 0px;
+}
+
+.password-input.invalid .eye-icon {
+    right: 25px !important;
+}
+
+.password-input.valid .eye-icon {
+    right: 25px !important;
+}
+
+@media (max-width: 576px) {
+    .login-container {
+        padding: 2rem 1rem;
+    }
+
+    .login-container .card {
+        padding: 1.5rem;
+    }
+
+    .form-label {
+        font-size: 0.9rem;
+    }
+
+    .form-control {
+        font-size: 0.9rem;
+    }
+
+    .text-muted,
+    h4 {
+        font-size: 0.95rem;
+    }
+
+    button {
+        font-size: 0.95rem;
+    }
+}

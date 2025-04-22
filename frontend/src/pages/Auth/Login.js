@@ -1,35 +1,41 @@
 import { useEffect, useState } from 'react';
-import Container from 'react-bootstrap/Container';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
+import { Container, Button, Form, Row, Col, Card } from 'react-bootstrap';
 import { useAuth } from '../../context/Auth';
 import { Slide, ToastContainer, toast } from 'react-toastify';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-
-import AuthServices from '../../services/Auth';
 import { useNavigate } from 'react-router-dom';
+import AuthServices from '../../services/Auth';
+import './Login.css'; // Đường dẫn CSS custom (tạo thêm file nếu muốn thêm hiệu ứng đẹp)
 
 function Login() {
     const { login, user } = useAuth();
     const navigate = useNavigate();
-    const [email, setEmail] = useState("DH52111700@student.stu.edu.vn");
-    const [password, setPassword] = useState("DH52111700");
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [validated, setValidated] = useState(false);
     const [typePassword, setTypePassword] = useState("password");
 
     useEffect(() => {
-        if (user)
-            if (user.role === "admin")
-                navigate('/admin');
-            else if (user.role === "teacher")
-                navigate('/teacher');
-            else if (user.role === "student")
-                navigate('/');
+        if (user) {
+            const timeout = setTimeout(() => {
+                switch (user.role) {
+                    case "teacher":
+                        navigate('/teacher');
+                        break;
+                    case "student":
+                        navigate('/');
+                        break;
+                    default:
+                        break;
+                }
+            }, 3000); // delay 3 giây
 
+            return () => clearTimeout(timeout); // clear nếu component unmount
+        }
     }, [user]);
 
     const handleSubmit = async (event) => {
-        event.preventDefault(); // Dừng việc gửi form
+        event.preventDefault();
         const form = event.currentTarget;
         if (form.checkValidity() === false) {
             setValidated(true);
@@ -38,76 +44,83 @@ function Login() {
 
         try {
             const response = await AuthServices.login(email, password);
-
             if (response.status === 200) {
-                // const decodeUser = jwtDecode();
                 login(response.data.token);
                 toast.success(response.data.message);
             } else {
                 toast.error(response.response.data.message);
             }
         } catch (error) {
-            console.log(error);
+            toast.error("Đăng nhập thất bại. Vui lòng kiểm tra lại!");
+            console.error(error);
         }
     };
 
-    const handleChangeType = (e) => {
-        if (typePassword === "password") setTypePassword("text");
-        else setTypePassword("password");
-    }
+    const togglePasswordType = () => {
+        setTypePassword(prev => prev === "password" ? "text" : "password");
+    };
+
     return (
         <>
-            <Container className='d-flex justify-content-center align-items-center vh-100'>
-                <div className='rounded border-secondary border px-5 py-3'>
-                    <h3 className='text-center fs-4'>Đăng Nhập</h3>
-                    <div className='border-secondary border mt-2 mb-3'> </div>
-                    <Form noValidate validated={validated} onSubmit={handleSubmit} >
-                        <Form.Group className="mb-3" controlId="formBasicEmail">
+            <Container fluid className="login-container d-flex align-items-center justify-content-center min-vh-100 bg-light">
+                <Card className="shadow-lg p-4 rounded-4" style={{ maxWidth: '400px', width: '100%' }}>
+                    <div className="text-center mb-3">
+                        <img src="https://cdn-icons-png.flaticon.com/512/942/942748.png" alt="logo" style={{ width: 50, height: 50 }} />
+                        <h4 className='mt-2 fw-bold'>Chào mừng trở lại!</h4>
+                        <p className="text-muted">Đăng nhập để tiếp tục</p>
+                    </div>
+
+                    <Form noValidate validated={validated} onSubmit={handleSubmit}>
+                        <Form.Group controlId="formBasicEmail" className="mb-3">
                             <Form.Label>Email</Form.Label>
                             <Form.Control
                                 type="email"
                                 required
-                                placeholder="VD: DH52111700@student.stu.edu.vn"
-                                list='cookies-email'
-                                onChange={(e) => setEmail(e.target.value)} />
-                            <Form.Control.Feedback type='invalid'>Vui lòng nhập email!</Form.Control.Feedback>
+                                placeholder="VD: example@student.stu.edu.vn"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
                         </Form.Group>
-                        <Form.Group className="mb-3" controlId="formBasicPassword">
-                            <div className='d-flex align-items-center justify-content-between'>
-                                <Form.Label>Mật khẩu</Form.Label>
-                                <div className='d-flex align-items-center'>
-                                    {typePassword === "password" ?
-                                        <FaEye onClick={(e) => handleChangeType(e)} />
-                                        : <FaEyeSlash onClick={(e) => handleChangeType(e)} />
-                                    }
-                                </div>
+
+                        <Form.Group controlId="formBasicPassword" className="mb-3">
+                            <Form.Label>Mật khẩu</Form.Label>
+                            <div className={`password-input ${validated && !password ? 'invalid' : ''} ${validated && password ? 'valid' : ''}`}>
+                                <Form.Control
+                                    type={typePassword}
+                                    required
+                                    placeholder="Nhập mật khẩu"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    isInvalid={validated && !password}
+                                />
+                                <span
+                                    className="eye-icon"
+                                    onClick={togglePasswordType}
+                                >
+                                    {typePassword === "password" ? <FaEye /> : <FaEyeSlash />}
+                                </span>
                             </div>
-                            <Form.Control
-                                type={typePassword}
-                                required
-                                placeholder="Password"
-                                onChange={(e) => setPassword(e.target.value)} />
-                            <Form.Control.Feedback type='invalid'>Vui lòng nhập mật khẩu!</Form.Control.Feedback>
+
                         </Form.Group>
-                        <Button variant="success" type="submit" className='ms-auto d-block'>
+
+
+
+                        <Button variant="primary" type="submit" className="w-100 mt-3">
                             Đăng nhập
                         </Button>
                     </Form>
-                </div>
+                </Card>
             </Container>
 
             <ToastContainer
                 position="top-right"
-                autoClose={5000}
+                autoClose={2500}
                 hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick={false}
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
+                closeOnClick
                 pauseOnHover
-                theme="light"
+                draggable
                 transition={Slide}
+
             />
         </>
     );

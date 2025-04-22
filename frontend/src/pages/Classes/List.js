@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { FaEye, FaPlus } from "react-icons/fa";
+import React, { useEffect, useState, useMemo } from "react";
+import { FaEye } from "react-icons/fa";
 import ClassesServices from "../../services/Classes";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../../context/Auth";
@@ -13,84 +13,65 @@ import "react-datepicker/dist/react-datepicker.css";
 const Home = () => {
     const { user } = useAuth();
     const [classes, setClasses] = useState([]);
-    const [filteredClasses, setFilteredClasses] = useState([]);
-    const [selectedDate, setSelectedDate] = useState(null);       // Chọn ngày
-    const [selectedWeek, setSelectedWeek] = useState(null);       // Chọn tuần
+    const [selectedDate, setSelectedDate] = useState(null);
+    const [selectedWeek, setSelectedWeek] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
-    const getClasses = async () => {
-        try {
-            const response = await ClassesServices.getClassByTeacherId();
-            if (response) {
-                setClasses(response);
-                filterClasses(null, null, response);
-            }
-        } catch (error) {
-            console.log(error);
-            setError("Lỗi tải dữ liệu thời khóa biểu");
-        } finally {
-            setLoading(false);
-        }
-    };
     useEffect(() => {
-        getClasses();
+        const fetchClasses = async () => {
+            try {
+                const response = await ClassesServices.getClassByTeacherId();
+                if (response) {
+                    setClasses(response);
+                }
+            } catch (error) {
+                setError("Lỗi tải dữ liệu thời khóa biểu");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchClasses();
     }, []);
 
-    useEffect(() => {
-        filterClasses(selectedDate, selectedWeek, classes);
-    }, [selectedDate, selectedWeek]);
+    const filterClasses = useMemo(() => {
+        let filtered = classes;
 
-    const filterClasses = (date, week, allClasses) => {
-        if (week) {
-            const startOfWeek = moment(week).startOf('week');
-            const endOfWeek = moment(week).endOf('week');
-            const filtered = allClasses.filter(item =>
+        if (selectedWeek) {
+            const startOfWeek = moment(selectedWeek).startOf('week');
+            const endOfWeek = moment(selectedWeek).endOf('week');
+            filtered = filtered.filter(item =>
                 moment(item.start_date).isBetween(startOfWeek, endOfWeek, null, '[]')
             );
-            setFilteredClasses(filtered);
-        } else if (date) {
-            const filtered = allClasses.filter(item =>
-                moment(item.start_date).isSame(date, 'day')
+        } else if (selectedDate) {
+            filtered = filtered.filter(item =>
+                moment(item.start_date).isSame(selectedDate, 'day')
             );
-            setFilteredClasses(filtered);
         } else {
             const startOfWeek = moment().startOf('week');
             const endOfWeek = moment().endOf('week');
-            const filtered = allClasses.filter(item =>
+            filtered = filtered.filter(item =>
                 moment(item.start_date).isBetween(startOfWeek, endOfWeek, null, '[]')
             );
-            setFilteredClasses(filtered);
         }
-    };
-    
+
+        return filtered;
+    }, [selectedDate, selectedWeek, classes]);
+
     return (
         <>
-            <div className="mt-3 mb-4">
-                <h3 className="text-center fs-5">Xem Thời Khóa Biểu</h3>
-                <div className="border border-1"></div>
+            <div className="pt-3 pb-2 mb-3 border-bottom">
+                <h3 className="fs-5">Xem Thời Khóa Biểu</h3>
             </div>
 
             {/* Bộ lọc ngày */}
-            <div className="row mb-3">
-                <div className="col-md-6">
-                    <label>Chọn ngày cụ thể:</label>
+            <div className="border border-1 p-3 rounded d-flex gap-3">
+                <div className="d-flex flex-column">
+                    <label htmlFor="selectedWeek" className="form-label">Chọn tuần:</label>
                     <DatePicker
-                        selected={selectedDate}
-                        onChange={(date) => {
-                            setSelectedDate(date);
-                            setSelectedWeek(null); // bỏ chọn tuần nếu đang chọn ngày
-                        }}
-                        dateFormat="dd/MM/yyyy"
-                        className="form-control"
-                        placeholderText="Chọn ngày"
-                    />
-                </div>
-
-                <div className="col-md-6">
-                    <label>Chọn tuần:</label>
-                    <DatePicker
+                        id="selectedWeek"
                         selected={selectedWeek}
                         onChange={(date) => {
                             setSelectedWeek(date);
@@ -103,7 +84,23 @@ const Home = () => {
                         placeholderText="Chọn tuần"
                     />
                 </div>
+                <div className="d-flex flex-column">
+                    <label htmlFor="selectedDate" className="form-label">Chọn ngày cụ thể:</label>
+                    <DatePicker
+                        id="selectedDate"
+                        selected={selectedDate}
+                        onChange={(date) => {
+                            setSelectedDate(date);
+                            setSelectedWeek(null); // bỏ chọn tuần nếu đang chọn ngày
+                        }}
+                        dateFormat="dd/MM/yyyy"
+                        className="form-control"
+                        placeholderText="Chọn ngày"
+                    />
+                </div>
+
             </div>
+
 
             {/* Nội dung thời khóa biểu */}
             {loading ? (
@@ -127,8 +124,8 @@ const Home = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredClasses.length > 0 ? (
-                                filteredClasses.map((classItem, index) => (
+                            {filterClasses.length > 0 ? (
+                                filterClasses.map((classItem, index) => (
                                     <tr key={index} className="table-row">
                                         <td>{classItem.class_code}</td>
                                         <td>{classItem.class_name}</td>
