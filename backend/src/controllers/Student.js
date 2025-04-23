@@ -51,22 +51,22 @@ const Student = {
 
     // 4. Cập nhật thông tin sinh viên
     updateStudent: async (req, res) => {
-        const { student_id } = req.params;
-        const { student_code, first_name, last_name, phone, email, user_id } = req.body;
+        const { studentId } = req.params;
+        const { student_code, first_name, last_name, phone, email } = req.body;
 
-        if (!student_code || !first_name || !last_name || !phone || !email || !user_id)
+        if (!student_code || !first_name || !last_name || !phone || !email)
             res.status(404).json({ message: "Thiếu thông tin cần thiết" });
 
         try {
-            const student = await models.Student.findByPk(student_id);
+            const student = await models.Student.findByPk(studentId);
             if (!student) {
                 return res.status(404).json({ message: "Không tìm thấy sinh viên" });
             }
 
-            await student.update({ student_code, first_name, last_name, phone, email, user_id });
-            res.json({ message: "Cập nhật thông tin sinh viên thành công", student });
+            await student.update({ student_code, first_name, last_name, phone, email });
+            return res.json({ message: "Cập nhật thông tin sinh viên thành công", student });
         } catch (error) {
-            res.status(500).json({ message: "Lỗi khi cập nhật sinh viên", error });
+            return res.status(500).json({ message: "Lỗi khi cập nhật sinh viên", error });
         }
     },
 

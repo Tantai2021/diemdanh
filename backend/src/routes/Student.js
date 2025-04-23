@@ -9,7 +9,7 @@ router.get("/qr-code", MW.verifyToken, StudentController.getQrcodeByUserId);
 router.get("/profile", MW.verifyToken, StudentController.getProfile);
 router.post("/", MW.verifyToken, MW.checkAdminOrTeacher, StudentController.createStudent);
 router.post("/create-bulk-qrcode", MW.verifyToken, MW.checkAdmin, StudentController.createBulkQrcode);
-router.put("/:student_id", MW.verifyToken, StudentController.updateStudent);
+router.put("/profile/:studentId", MW.verifyToken, StudentController.updateStudent);
 router.delete("/:student_id", MW.verifyToken, MW.checkAdmin, StudentController.deleteStudent);
 
 module.exports = router;

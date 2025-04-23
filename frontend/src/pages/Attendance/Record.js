@@ -164,40 +164,42 @@ const Record = () => {
 
         <div>
             <h3 className="fs-5 mt-3">Danh sách sinh viên trong lớp học</h3>
-            <Table striped bordered hover>
-                <thead>
-                    <tr>
-                        <th className="text-center"> <input type="checkbox" checked={selectedIds.length === records?.value?.length} onChange={handleCheckboxAll} /> </th>
-                        <th className="text-center">STT</th>
-                        <th className="text-center">Họ lót</th>
-                        <th className="text-center">Tên</th>
-                        <th className="text-center">Trạng thái</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {records?.value?.length > 0 ? (<>
-                        {records?.value?.map((item, index) => (
-                            <tr key={index}>
-                                <td className="text-center align-middle"> <input type="checkbox" value={item.id} checked={selectedIds.includes(item.id)} onChange={handleCheckboxChange} /></td>
-                                <td className="text-center align-middle">{index + 1}</td>
-                                <td className="text-start align-middle">{item.student.first_name}</td>
-                                <td className="text-center align-middle">{item.student.last_name}</td>
-                                <td className="text-center align-middle w-25">
-                                    <select value={item.status} onChange={(e) => handleAttendaneceStatusChange(e, item.id)} className="form-select">
-                                        <option value={"None"}>Chưa điểm danh</option>
-                                        <option value={"Present"}>Đã điểm danh</option>
-                                    </select>
-                                </td>
-                            </tr>
-                        ))}
-                    </>) :
-                        (<tr>
-                            <td colSpan="5" className="text-center">Chưa có sinh viên nào trong lớp</td>
-                        </tr>)}
+            <div className="table-responsive">
+                <Table striped bordered hover>
+                    <thead>
+                        <tr>
+                            <th className="text-center"> <input type="checkbox" checked={selectedIds.length === records?.value?.length} onChange={handleCheckboxAll} /> </th>
+                            <th className="text-center">STT</th>
+                            <th className="text-center">Họ lót</th>
+                            <th className="text-center">Tên</th>
+                            <th className="text-center">Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {records?.value?.length > 0 ? (<>
+                            {records?.value?.map((item, index) => (
+                                <tr key={index}>
+                                    <td className="text-center align-middle"> <input type="checkbox" value={item.id} checked={selectedIds.includes(item.id)} onChange={handleCheckboxChange} /></td>
+                                    <td className="text-center align-middle">{index + 1}</td>
+                                    <td className="text-start align-middle">{item.student.first_name}</td>
+                                    <td className="text-center align-middle">{item.student.last_name}</td>
+                                    <td className="text-center align-middle w-25">
+                                        <select value={item.status} onChange={(e) => handleAttendaneceStatusChange(e, item.id)} className="form-select">
+                                            <option value={"None"}>Chưa điểm danh</option>
+                                            <option value={"Present"}>Đã điểm danh</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            ))}
+                        </>) :
+                            (<tr>
+                                <td colSpan="5" className="text-center">Chưa có sinh viên nào trong lớp</td>
+                            </tr>)}
 
 
-                </tbody >
-            </Table >
+                    </tbody >
+                </Table >
+            </div>
         </div >
 
         <CommonModal show={modalShow} onHide={() => setModalShow(false)} {...modalProps} />

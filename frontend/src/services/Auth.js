@@ -2,7 +2,6 @@
 import axios from "./ConfigAxios";
 
 const endpoint = process.env.REACT_APP_ENDPOINT_AUTH;
-console.log(endpoint);
 
 const AuthServices = {
     login: async (email, password) => {

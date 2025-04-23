@@ -47,6 +47,15 @@ const Student = {
             console.log(error);
             return null;
         }
+    },
+    updateProfile: async (studentUpdate) => {
+        try {
+            const response = await axios.put(`${endpoint}/profile/${studentUpdate?.student_id}`, studentUpdate);
+            return response?.data;
+        } catch (error) {
+            console.log(error);
+            return null;
+        }
     }
 };
 export default Student;

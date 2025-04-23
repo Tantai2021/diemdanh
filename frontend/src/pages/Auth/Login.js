@@ -120,7 +120,6 @@ function Login() {
                 pauseOnHover
                 draggable
                 transition={Slide}
-
             />
         </>
     );
