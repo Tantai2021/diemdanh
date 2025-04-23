@@ -29,7 +29,6 @@ const ConfigRouter = () => {
                     <Route path="students" element={<Student.List />} />
                 </Route>
                 <Route path="/teacher" element={<TeacherRoutes />}>
-                    <Route index element={<Classes.List />} />
                     <Route path="timetable" element={<Classes.List />} />
                     <Route path="timetable/record/:class_id" element={<Attendance.Record />} />
                 </Route>
